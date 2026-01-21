@@ -1,0 +1,162 @@
+# JWT Verification API Contract
+
+## API Version: 1.0
+
+## Base Path: `/api/v1`
+
+## Endpoints
+
+### POST /auth/verify
+
+**Description**: Verify a JWT token and return its claims
+
+**Request**:
+- Method: POST
+- Path: `/api/v1/auth/verify`
+- Content-Type: `application/json`
+
+**Request Body**:
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "algorithms": ["HS256"]
+}
+```
+
+**Request Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string",
+      "description": "The JWT token to verify"
+    },
+    "algorithms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Allowed signing algorithms, defaults to ['HS256']",
+      "default": ["HS256"]
+    }
+  },
+  "required": ["token"]
+}
+```
+
+**Successful Response (200 OK)**:
+```json
+{
+  "valid": true,
+  "claims": {
+    "sub": "1234567890",
+    "name": "John Doe",
+    "iat": 1516239022,
+    "exp": 1516242622
+  },
+  "expires_at": "2025-12-30T10:30:22Z",
+  "issued_at": "2025-12-30T09:30:22Z",
+  "subject": "1234567890"
+}
+```
+
+**Response Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "valid": {
+      "type": "boolean",
+      "description": "Whether the token is valid"
+    },
+    "claims": {
+      "type": "object",
+      "description": "The decoded payload claims"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Token expiration time"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Token issue time"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Token subject"
+    }
+  },
+  "required": ["valid", "claims"]
+}
+```
+
+**Error Responses**:
+
+**Invalid Token (401 Unauthorized)**:
+```json
+{
+  "valid": false,
+  "error": "Invalid token signature",
+  "error_code": "INVALID_SIGNATURE"
+}
+```
+
+**Expired Token (401 Unauthorized)**:
+```json
+{
+  "valid": false,
+  "error": "Token has expired",
+  "error_code": "TOKEN_EXPIRED"
+}
+```
+
+**Malformed Token (422 Unprocessable Entity)**:
+```json
+{
+  "valid": false,
+  "error": "Token format is invalid",
+  "error_code": "INVALID_FORMAT"
+}
+```
+
+**Error Response Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "valid": {
+      "type": "boolean",
+      "description": "Whether the token is valid (always false for errors)"
+    },
+    "error": {
+      "type": "string",
+      "description": "Descriptive error message"
+    },
+    "error_code": {
+      "type": "string",
+      "description": "Standardized error code"
+    }
+  },
+  "required": ["valid", "error", "error_code"]
+}
+```
+
+## GET /auth/config
+
+**Description**: Get JWT verification configuration
+
+**Request**:
+- Method: GET
+- Path: `/api/v1/auth/config`
+
+**Successful Response (200 OK)**:
+```json
+{
+  "supported_algorithms": ["HS256", "RS256", "ES256"],
+  "default_algorithm": "HS256",
+  "token_expiry_seconds": 3600
+}
+```

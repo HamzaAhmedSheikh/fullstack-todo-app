@@ -1,0 +1,40 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Test files
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+pytest.ini
+
+# Development files
+.env
+.env.local
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Alembic (migrations run separately)
+alembic/
+alembic.ini
+
+# Misc
+*.md
+!README.md
+*.lock
+generate_test_token.py

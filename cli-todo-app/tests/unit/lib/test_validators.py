@@ -1,6 +1,9 @@
 """Unit tests for input validators."""
 
 import pytest
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent.parent))
 from src.lib.validators import (
     create_questionary_description_validator,
     create_questionary_title_validator,
