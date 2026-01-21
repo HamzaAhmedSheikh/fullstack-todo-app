@@ -3,7 +3,10 @@
 import pytest
 import questionary
 from unittest.mock import patch, MagicMock
-from src.cli.main import view_tasks, add_task
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from main import view_tasks, add_task
 from src.services.task_service import TaskService
 from io import StringIO
 
@@ -11,7 +14,7 @@ from io import StringIO
 class TestViewTasksFlow:
     """Integration tests for viewing tasks."""
 
-    @patch('src.cli.main.Console')
+    @patch('main.Console')
     def test_view_tasks_empty_list(self, mock_console_class):
         """Test viewing tasks when list is empty."""
         # Setup
@@ -25,7 +28,7 @@ class TestViewTasksFlow:
         # Verify print was called (shows friendly message)
         mock_console.print.assert_called_once()
 
-    @patch('src.cli.main.Console')
+    @patch('main.Console')
     def test_view_tasks_with_items(self, mock_console_class):
         """Test viewing tasks when tasks exist."""
         # Setup
@@ -41,7 +44,7 @@ class TestViewTasksFlow:
         # Verify table is printed
         mock_console.print.assert_called()
 
-    @patch('src.cli.main.Console')
+    @patch('main.Console')
     def test_view_tasks_shows_completed_and_pending(self, mock_console_class):
         """Test viewing tasks shows different statuses."""
         # Setup
@@ -62,8 +65,8 @@ class TestViewTasksFlow:
 class TestAddTaskFlow:
     """Integration tests for adding tasks."""
 
-    @patch('src.cli.main.questionary')
-    @patch('src.cli.main.Console')
+    @patch('main.questionary')
+    @patch('main.Console')
     def test_add_task_with_description(self, mock_console_class, mock_questionary):
         """Test adding a task with title and description."""
         # Setup
@@ -89,8 +92,8 @@ class TestAddTaskFlow:
         # Verify success message was shown
         mock_console.print.assert_called()
 
-    @patch('src.cli.main.questionary')
-    @patch('src.cli.main.Console')
+    @patch('main.questionary')
+    @patch('main.Console')
     def test_add_task_without_description(self, mock_console_class, mock_questionary):
         """Test adding a task without description."""
         # Setup
@@ -117,8 +120,8 @@ class TestAddTaskFlow:
 class TestToggleCompletionFlow:
     """Integration tests for toggling task completion."""
 
-    @patch('src.cli.main.questionary')
-    @patch('src.cli.main.Console')
+    @patch('main.questionary')
+    @patch('main.Console')
     def test_toggle_completion(self, mock_console_class, mock_questionary):
         """Test toggling task completion status."""
         # Setup
@@ -132,7 +135,7 @@ class TestToggleCompletionFlow:
         mock_questionary.Choice = questionary.Choice  # Use real Choice class
 
         # Execute
-        from src.cli.main import toggle_completion
+        from main import toggle_completion
         toggle_completion(service)
 
         # Verify status was toggled
@@ -143,8 +146,8 @@ class TestToggleCompletionFlow:
 class TestUpdateTaskFlow:
     """Integration tests for updating tasks."""
 
-    @patch('src.cli.main.questionary')
-    @patch('src.cli.main.Console')
+    @patch('main.questionary')
+    @patch('main.Console')
     def test_update_task(self, mock_console_class, mock_questionary):
         """Test updating a task."""
         # Setup
@@ -162,7 +165,7 @@ class TestUpdateTaskFlow:
         ]
 
         # Execute
-        from src.cli.main import update_task_menu
+        from main import update_task_menu
         update_task_menu(service)
 
         # Verify task was updated
@@ -174,8 +177,8 @@ class TestUpdateTaskFlow:
 class TestDeleteTaskFlow:
     """Integration tests for deleting tasks."""
 
-    @patch('src.cli.main.questionary')
-    @patch('src.cli.main.Console')
+    @patch('main.questionary')
+    @patch('main.Console')
     def test_delete_task(self, mock_console_class, mock_questionary):
         """Test deleting a task."""
         # Setup
@@ -190,7 +193,7 @@ class TestDeleteTaskFlow:
         mock_questionary.confirm.return_value.ask.return_value = True  # Confirm deletion
 
         # Execute
-        from src.cli.main import delete_task_menu
+        from main import delete_task_menu
         delete_task_menu(service)
 
         # Verify task was deleted
