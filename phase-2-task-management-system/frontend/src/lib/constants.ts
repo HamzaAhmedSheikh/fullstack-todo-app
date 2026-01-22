@@ -4,14 +4,30 @@
  */
 
 // ============================================================================
+// Production URLs
+// ============================================================================
+
+export const PRODUCTION_URLS = {
+  FRONTEND: "https://task-management-system-three-ashy.vercel.app",
+  BACKEND: "https://hamzascrift-docker-compose.hf.space",
+} as const;
+
+// ============================================================================
 // API Configuration
 // ============================================================================
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   (process.env.NODE_ENV === "production"
-    ? "https://hamzascrift-docker-compose.hf.space"
+    ? PRODUCTION_URLS.BACKEND
     : "http://localhost:8000");
+
+// Better Auth URL (frontend URL where auth API routes are hosted)
+export const BETTER_AUTH_URL =
+  process.env.NEXT_PUBLIC_BETTER_AUTH_URL ||
+  (process.env.NODE_ENV === "production"
+    ? PRODUCTION_URLS.FRONTEND
+    : "http://localhost:3000");
 
 export const API_ENDPOINTS = {
   TASKS: (userId: string) => `/api/${userId}/tasks`,
