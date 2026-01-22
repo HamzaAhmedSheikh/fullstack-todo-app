@@ -6,14 +6,19 @@
 
 import { createAuthClient } from "better-auth/react";
 import { jwtClient } from "better-auth/client/plugins";
+import { BETTER_AUTH_URL } from "./constants";
 
 /**
  * Initialize Better Auth client
  * Points to the Next.js API routes where Better Auth server runs
  * Includes jwtClient plugin for retrieving JWT tokens for backend API calls
+ *
+ * URLs:
+ * - Local: http://localhost:3000
+ * - Production: https://task-management-system-three-ashy.vercel.app
  */
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: BETTER_AUTH_URL,
   plugins: [
     jwtClient(), // Enables authClient.token() for JWT retrieval
   ],
