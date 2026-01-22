@@ -17,11 +17,13 @@ import pytest_asyncio
 
 # Import after setting up test environment
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Set test environment before importing app
 os.environ["ENVIRONMENT"] = "test"
-# Use Neon DB with asyncpg driver for tests
-os.environ["DATABASE_URL"] = "postgresql+asyncpg://default:SM21ZdGIVovT@ep-muddy-resonance-215657-pooler.us-east-1.aws.neon.tech/phase2-fullstack-todo-app?ssl=require"
 
 from app.main import app
 from app.database.session import get_db
