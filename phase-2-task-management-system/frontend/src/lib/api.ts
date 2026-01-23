@@ -10,12 +10,14 @@ import type { ApiError } from "./types";
 
 /**
  * API Client Configuration
+ * Note: Remove trailing slash from API_BASE_URL to avoid double slashes in URLs
  */
-const API_BASE_URL =
+const API_BASE_URL = (
   process.env.NEXT_PUBLIC_API_URL ||
   (process.env.NODE_ENV === "production"
     ? "https://hamzascrift-docker-compose.hf.space"
-    : "http://localhost:8000");
+    : "http://localhost:8000")
+).replace(/\/+$/, ""); // Remove trailing slashes
 
 /**
  * Get authorization headers with JWT token
