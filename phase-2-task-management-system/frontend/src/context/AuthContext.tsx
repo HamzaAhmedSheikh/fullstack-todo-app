@@ -124,13 +124,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   /**
    * Session state listener to detect session changes across tabs
+   * Only checks when tab becomes visible to avoid excessive polling
    */
   useEffect(() => {
-    // Check session periodically to detect logout in other tabs
+    // Check session when tab becomes visible (cross-tab sync)
     const checkSession = async () => {
       // Skip if we just authenticated (prevents race condition)
       if (justAuthenticatedRef.current) {
         justAuthenticatedRef.current = false;
+        return;
+      }
+
+      // Skip if tab is not visible
+      if (typeof document !== "undefined" && document.visibilityState === "hidden") {
         return;
       }
 
@@ -154,15 +160,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    // Delay the initial check to allow session cookie to be set
-    const initialTimeout = setTimeout(checkSession, 2000);
+    // Check session when tab becomes visible again
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && user) {
+        checkSession();
+      }
+    };
 
-    // Check every 5 seconds
-    const interval = setInterval(checkSession, 5000);
+    // Listen for visibility changes instead of polling
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // Listen for storage events (cross-tab logout detection)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "auth-logout") {
+        setUser(null);
+        router.push(ROUTES.SIGNIN);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, [user, router]);
 
@@ -233,6 +252,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await signOut();
       setUser(null);
       setError(null);
+
+      // Notify other tabs about logout via storage event
+      localStorage.setItem("auth-logout", Date.now().toString());
+      localStorage.removeItem("auth-logout");
 
       // Show success message
       // Note: Toast is shown in LogoutButton component before redirect
