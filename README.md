@@ -1,4 +1,4 @@
-# Fullstack Todo App — Hackathon II
+# Fullstack Task Manager — Hackathon II
 
 A multi-phase, spec-driven todo application that evolves from a polished Python CLI into a production-grade, multi-user full-stack web platform. Built for **Hackathon II** using [GitHub Spec-Kit](https://github.com/github/spec-kit) to demonstrate disciplined, specification-first development across the entire stack.
 
